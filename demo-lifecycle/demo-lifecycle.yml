@@ -93,6 +93,10 @@ node_types:
         type: alien.relationships.GenericConnectToGeneric
         lower_bound: 0
         upper_bound: unbounded
+      - docker_requirement: alien.capabilities.GenericDockerCapability
+        type: alien.relationships.GenericConnectToDocker
+        lower_bound: 0
+        upper_bound: unbounded
     interfaces:
       Standard:
         create:
@@ -174,9 +178,27 @@ relationship_types:
           implementation: scripts/GenericConnectToGeneric/remove_target.sh
         remove_source:
           implementation: scripts/GenericConnectToGeneric/remove_source.sh
+  alien.relationships.GenericConnectToDocker:
+    derived_from: tosca.relationships.ConnectsTo
+    valid_sources: [ alien.capabilities.GenericCapability ]
+    valid_targets: [ alien.capabilities.GenericDockerCapability ]
+    interfaces:
+      configure:
+        pre_configure_source:
+          implementation: scripts/GenericConnectToGeneric/pre_configure_source.sh
+        post_configure_source:
+          implementation: scripts/GenericConnectToGeneric/post_configure_source.sh
+        add_target:
+          inputs:
+            TARGET_IP: { get_attribute: [TARGET, ip_address] }
+          implementation: scripts/GenericConnectToGeneric/add_target.sh
+        remove_target:
+          implementation: scripts/GenericConnectToGeneric/remove_target.sh
 
 capability_types:
   alien.capabilities.GenericCapability:
+    derived_from: tosca.capabilities.Root
+  alien.capabilities.GenericDockerCapability:
     derived_from: tosca.capabilities.Root
 
 topology_template:

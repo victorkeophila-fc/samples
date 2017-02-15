@@ -1,0 +1,30 @@
+tosca_definitions_version: alien_dsl_1_3_0
+
+template_name: demo-lifecycle-generic-docker
+template_author: Alien4cloud
+template_version: 1.0.0-SNAPSHOT
+
+imports:
+  - tosca-normative-types:1.0.0-ALIEN12
+  - docker-types:1.2.0-SNAPSHOT
+  - demo-lifecycle:1.0.0-SNAPSHOT
+
+repositories:
+  docker:
+    url: https://hub.docker.com/
+    type: http
+
+node_types:
+  alien.nodes.GenericDockerContainer:
+    derived_from: tosca.nodes.Container.Application.DockerContainer
+    capabilities:
+      generic_capability:
+        type: alien.capabilities.GenericDockerCapability
+        occurrences: [0,unbounded]
+    interfaces:
+      Standard:
+        create:
+          implementation:
+            file: mongo:latest
+            repository: docker
+            type: tosca.artifacts.Deployment.Image.Container.Docker
